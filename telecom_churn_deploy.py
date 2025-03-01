@@ -15,6 +15,10 @@ import subprocess
 subprocess.check_call(['pip', 'install', '-r', 'requirements.txt'])
 
 """## Importing Libraries"""
+import sys
+sys.path.append('/usr/local/lib/python3.9/site-packages')  # Adjust Python version if needed
+
+from imblearn.over_sampling import SMOTE
 
 import numpy as np
 import pandas as pd
