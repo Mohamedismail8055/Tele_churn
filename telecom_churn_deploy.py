@@ -340,7 +340,7 @@ import joblib
 joblib.dump(logreg, "logistic_model.pkl")
 joblib.dump(best_xgb_classifier, "tuned_xgboost_model.pkl")
 joblib.dump(best_gb_classifier, "tuned_gradient_boosting_model.pkl")
-joblib.dump(scaler, 'scaler.joblib')
+joblib.dump(scaler, 'scaler.pkl')
 
 # DEPLOYMENT
 
