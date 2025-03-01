@@ -34,7 +34,10 @@ import os
 
 """# Importing the dataset"""
 
-df = pd.read_excel('churn1.xlsx')
+import subprocess
+subprocess.run(["pip", "install", "openpyxl"], check=True) # since the dataset file is of .xlsx, not csv.
+
+df = pd.read_excel('churn1.xlsx',engine="openpyxl")
 df.head()
 
 # Dropping unnecessary column "Unnamed"
