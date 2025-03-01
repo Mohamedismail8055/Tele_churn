@@ -340,8 +340,9 @@ import joblib
 joblib.dump(logreg, "logistic_model.pkl")
 joblib.dump(best_xgb_classifier, "tuned_xgboost_model.pkl")
 joblib.dump(best_gb_classifier, "tuned_gradient_boosting_model.pkl")
+joblib.dump(scaler, 'scaler.joblib')
 
-"""# DEPLOYMENT"""
+# DEPLOYMENT
 
 import streamlit as st
 import joblib
@@ -352,6 +353,7 @@ import pandas as pd
 logistic_model = joblib.load("logistic_model.pkl")
 xgboost_model = joblib.load("tuned_xgboost_model.pkl")
 gb_model = joblib.load("tuned_gradient_boosting_model.pkl")
+scaler = joblib.load("scaler.pkl")  # Load the scaler
 
 # Top 10 Features Ranked by Importance
 top_features = ['day.mins', 'customer.calls', 'eve.mins', 'voice.plan', 'night.mins',
@@ -362,8 +364,7 @@ st.title("Telecom Churn Prediction App")
 st.write("Select model, features, and input values to predict churn.")
 
 # Model selection
-st.write("### Tuned Gradient Boosting has the highest accuracy")
-model_choice = st.selectbox("Choose a model:",
+model_choice = st.selectbox("Choose a model:", 
                             ["Logistic Regression", "Tuned XGBoost", "Tuned Gradient Boosting (Highest Accuracy)"])
 
 # Feature selection
@@ -374,8 +375,9 @@ user_input = {}
 for feature in selected_features:
     user_input[feature] = st.number_input(f"Enter value for {feature}", value=0.0)
 
-# Convert user input to DataFrame
+# Convert user input to DataFrame and standardize
 input_data = pd.DataFrame([user_input])
+input_data = scaler.transform(input_data)  # Standardize features using the loaded scaler
 
 # Prediction
 if st.button("Predict Churn"):
@@ -385,10 +387,10 @@ if st.button("Predict Churn"):
         model = xgboost_model
     else:
         model = gb_model
-
+    
     prediction = model.predict(input_data)
     probability = model.predict_proba(input_data)[:, 1]
-
+    
     st.subheader("Prediction Result")
     churn_status = "Churned" if prediction[0] == 1 else "Not Churned"
     st.write(f"Prediction: **{churn_status}**")
