@@ -15,7 +15,6 @@ import subprocess
 subprocess.check_call(['pip', 'install', '-r', 'requirements.txt'])
 
 """## Importing Libraries"""
-!pip install imbalanced-learn
 
 import numpy as np
 import pandas as pd
