@@ -16,6 +16,11 @@ subprocess.check_call(['pip', 'install', '-r', 'requirements.txt'])
 
 """## Importing Libraries"""
 
+import subprocess
+subprocess.run(["pip", "install", "imbalanced-learn"], check=True)
+
+from imblearn.over_sampling import SMOTE
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
