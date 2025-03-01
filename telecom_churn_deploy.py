@@ -34,7 +34,7 @@ import os
 
 """# Importing the dataset"""
 
-df = pd.read_excel('/content/churn1.xlsx')
+df = pd.read_excel('churn1.xlsx')
 df.head()
 
 # Dropping unnecessary column "Unnamed"
