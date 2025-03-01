@@ -377,7 +377,7 @@ for feature in selected_features:
 
 # Convert user input to DataFrame and standardize
 input_data = pd.DataFrame([user_input])
-input_data = scaler.transform(input_data)  # Standardize features using the loaded scaler
+input_data = scaler.fit_transform(input_data)  # Standardize features using the loaded scaler
 
 # Prediction
 if st.button("Predict Churn"):
