@@ -9,13 +9,6 @@ Original file is located at
 #Telecom Customer Churn Prediction
 """
 
-import subprocess
-
-# Install dependencies from requirements.txt
-subprocess.check_call(['pip', 'install', '-r', 'requirements.txt'])
-
-"""## Importing Libraries"""
-
 
 import numpy as np
 import pandas as pd
@@ -333,6 +326,13 @@ accuracy_best_gb = accuracy_score(y_test, y_pred_best_gb)
 print(f"Gradient Boosting Accuracy (with best hyperparameters): {accuracy_best_gb}")
 print(classification_report(y_test, y_pred_best_gb))
 print(confusion_matrix(y_test, y_pred_best_gb))
+
+import subprocess
+
+# Install dependencies from requirements.txt
+subprocess.check_call(['pip', 'install', '-r', 'requirements.txt'])
+
+"""## Importing Libraries"""
 
 import joblib
 
