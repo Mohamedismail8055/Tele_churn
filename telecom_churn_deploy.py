@@ -236,10 +236,10 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 
 # Expanded parameter grid
 param_grid_xgb = {
-    'n_estimators': [150, 200, 250, 300],
-    'learning_rate': [0.001, 0.01, 0.1, 0.2],
-    'max_depth': [8, 9, 10],
-    'subsample': [0.7, 0.8, 0.9, 1.0]
+    'n_estimators': [200,300],
+    'learning_rate': [0.1, 0.2],
+    'max_depth': [9, 10],
+    'subsample': [0.7, 0.8, 1.0]
 }
 
 # Use RandomizedSearchCV for efficiency
@@ -284,13 +284,13 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 
 # Define hyperparameter grid
 param_grid_gb = {
-     'n_estimators': [50, 100, 200, 300, 500],  # Number of boosting rounds
-    'learning_rate': [0.01, 0.05, 0.1, 0.2, 0.3],  # Step size
-    'max_depth': [3, 5, 7, 9],  # Tree depth
-    'min_samples_split': [2, 5, 10, 15],  # Min samples to split a node
-    'min_samples_leaf': [1, 2, 4, 6],  # Min samples per leaf
-    'subsample': [0.7, 0.8, 0.9, 1.0],  # Fraction of samples per iteration
-    'max_features': ['sqrt', 'log2', None]  # Features per split
+     'n_estimators': [200, 300, 500],  # Number of boosting rounds
+    'learning_rate': [0.1, 0.2, 0.3],  # Step size
+    'max_depth': [3, 7, 9],  # Tree depth
+    'min_samples_split': [5, 10, 15],  # Min samples to split a node
+    'min_samples_leaf': [1, 4],  # Min samples per leaf
+    'subsample': [0.7, 0.9, 1.0],  # Fraction of samples per iteration
+    'max_features': ['sqrt', None]  # Features per split
 }
 
 # Initialize RandomizedSearchCV
