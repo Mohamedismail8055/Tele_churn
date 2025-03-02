@@ -318,8 +318,18 @@ gb_model = joblib.load("tuned_gradient_boosting_model.pkl")
 scaler = joblib.load("scaler.pkl")  # Load the scaler
 
 # Top 10 Features Ranked by Importance
-top_features = ['day.mins', 'customer.calls', 'eve.mins', 'voice.plan', 'night.mins',
-                'account.length', 'intl.mins', 'night.calls', 'day.calls', 'eve.calls']
+feature_types = {
+    'day.mins': 'float',
+    'customer.calls': 'int',
+    'eve.mins': 'float',
+    'voice.plan': 'binary',
+    'night.mins': 'float',
+    'account.length': 'int',
+    'intl.mins': 'float',
+    'night.calls': 'int',
+    'day.calls': 'int',
+    'eve.calls': 'int'
+}
 
 # Streamlit UI
 st.title("Telecom Churn Prediction App")
@@ -330,12 +340,17 @@ model_choice = st.selectbox("Choose a model:",
                             ["Logistic Regression", "Tuned XGBoost", "Tuned Gradient Boosting (Highest Accuracy)"])
 
 # Feature selection
-selected_features = st.multiselect("Select features:", top_features, default=top_features)
+selected_features = st.multiselect("Select features:", list(feature_types.keys()), default=list(feature_types.keys()))
 
 # User input for selected features
 user_input = {}
 for feature in selected_features:
-    user_input[feature] = st.number_input(f"Enter value for {feature}", value=0.0)
+    if feature_types[feature] == 'int':
+        user_input[feature] = st.number_input(f"Enter value for {feature}", min_value=0, step=1, value=0)
+    elif feature_types[feature] == 'float':
+        user_input[feature] = st.number_input(f"Enter value for {feature}", min_value=0.0, step=0.1, value=0.0)
+    elif feature_types[feature] == 'binary':
+        user_input[feature] = st.radio(f"Select value for {feature}", options=[0, 1], index=0)
 
 # Convert user input to DataFrame and standardize
 input_data = pd.DataFrame([user_input])
