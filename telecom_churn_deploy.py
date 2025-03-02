@@ -305,6 +305,7 @@ joblib.dump(gb_classifier, "tuned_gradient_boosting_model.pkl")
 joblib.dump(scaler, 'scaler.pkl')
 
 # DEPLOYMENT
+# DEPLOYMENT
 
 import streamlit as st
 import joblib
@@ -318,18 +319,8 @@ gb_model = joblib.load("tuned_gradient_boosting_model.pkl")
 scaler = joblib.load("scaler.pkl")  # Load the scaler
 
 # Top 10 Features Ranked by Importance
-feature_types = {
-    'day.mins': 'float',
-    'customer.calls': 'int',
-    'eve.mins': 'float',
-    'voice.plan': 'binary',
-    'night.mins': 'float',
-    'account.length': 'int',
-    'intl.mins': 'float',
-    'night.calls': 'int',
-    'day.calls': 'int',
-    'eve.calls': 'int'
-}
+features = ['day.mins', 'customer.calls', 'eve.mins', 'voice.plan', 'night.mins',
+            'account.length', 'intl.mins', 'night.calls', 'day.calls', 'eve.calls']
 
 # Streamlit UI
 st.title("Telecom Churn Prediction App")
@@ -340,17 +331,12 @@ model_choice = st.selectbox("Choose a model:",
                             ["Logistic Regression", "Tuned XGBoost", "Tuned Gradient Boosting (Highest Accuracy)"])
 
 # Feature selection
-selected_features = st.multiselect("Select features:", list(feature_types.keys()), default=list(feature_types.keys()))
+selected_features = st.multiselect("Select features:", features, default=features)
 
-# User input for selected features
+# User input fields
 input_fields = {}
 for feature in selected_features:
-    if feature_types[feature] == 'int':
-        user_input[feature] = st.number_input(f"Enter value for {feature}", min_value=0, step=1, value=0)
-    elif feature_types[feature] == 'float':
-        user_input[feature] = st.number_input(f"Enter value for {feature}", min_value=0.0, step=0.1, value=0.0)
-    elif feature_types[feature] == 'binary':
-        user_input[feature] = st.radio(f"Select value for {feature}", options=[0, 1], index=0)
+    input_fields[feature] = st.number_input(f"Enter value for {feature}", value=0.0)
 
 # Create a dictionary for user input
 user_input = {feature: input_fields[feature] for feature in selected_features}
@@ -375,7 +361,10 @@ if st.button("Predict Churn"):
         model = gb_model
     
     prediction = model.predict(input_data)
+    probability = model.predict_proba(input_data)[:, 1]
     
     st.subheader("Prediction Result")
     churn_status = "Churned" if prediction[0] == 1 else "Not Churned"
     st.write(f"Prediction: **{churn_status}**")
+    st.write(f"Churn Probability: **{probability[0]:.2%}**")
+
