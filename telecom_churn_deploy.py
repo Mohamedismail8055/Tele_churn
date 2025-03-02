@@ -372,9 +372,7 @@ if st.button("Predict Churn"):
         model = gb_model
     
     prediction = model.predict(input_data)
-    probability = model.predict_proba(input_data)[:, 1]
     
     st.subheader("Prediction Result")
     churn_status = "Churned" if prediction[0] == 1 else "Not Churned"
     st.write(f"Prediction: **{churn_status}**")
-    st.write(f"Churn Probability: **{probability[0]:.2%}**")
