@@ -230,102 +230,64 @@ print(confusion_matrix(y_test, y_pred))
 
 """TUNED XGBOOST MODEL"""
 
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
-import xgboost as xgb
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import xgboost as xgb
 
-# Expanded parameter grid
-param_grid_xgb = {
-    'n_estimators': [300],
-    'learning_rate': [0.1],
-    'max_depth': [10],
-    'subsample': [ 0.8]
+# Define fixed parameters for XGBoost
+xgb_params = {
+    'n_estimators': 300,
+    'learning_rate': 0.1,
+    'max_depth': 10,
+    'subsample': 0.8,
+    'use_label_encoder': False,
+    'eval_metric': 'mlogloss',
+    'random_state': 42
 }
 
-# Use RandomizedSearchCV for efficiency
-random_search_xgb = RandomizedSearchCV(
-    estimator=xgb.XGBClassifier(use_label_encoder=False, eval_metric='mlogloss', random_state=42),
-    param_distributions=param_grid_xgb,
-    n_iter=50,  # Adjust for more trials
-    cv=5,
-    scoring='accuracy',
-    n_jobs=-1,
-    verbose=2,
-    random_state=42
-)
-
-# Fit the model
-random_search_xgb.fit(X_train, y_train)
-
-# Get best parameters
-best_params_xgb = random_search_xgb.best_params_
-best_score_xgb = random_search_xgb.best_score_
-
-print(f"Best hyperparameters for XGBoost: {best_params_xgb}")
-print(f"Best cross-validation score for XGBoost: {best_score_xgb}")
-
-# Train final model with best parameters
-best_xgb_classifier = xgb.XGBClassifier(**best_params_xgb, use_label_encoder=False, eval_metric='mlogloss', random_state=42)
-best_xgb_classifier.fit(X_train, y_train)
+# Initialize and train the XGBoost model
+xgb_classifier = xgb.XGBClassifier(**xgb_params)
+xgb_classifier.fit(X_train, y_train)
 
 # Evaluate on test data
-y_pred_best_xgb = best_xgb_classifier.predict(X_test)
-accuracy_best_xgb = accuracy_score(y_test, y_pred_best_xgb)
+y_pred_xgb = xgb_classifier.predict(X_test)
+accuracy_xgb = accuracy_score(y_test, y_pred_xgb)
 
-print(f"XGBoost Accuracy (with best hyperparameters): {accuracy_best_xgb}")
-print(classification_report(y_test, y_pred_best_xgb))
-print(confusion_matrix(y_test, y_pred_best_xgb))
+# Print results
+print(f"XGBoost Accuracy: {accuracy_xgb:.4f}")
+print(classification_report(y_test, y_pred_xgb))
+print(confusion_matrix(y_test, y_pred_xgb))
+
 
 """TUNED GRADIENT BOOSTING MODEL"""
 
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
-# Define hyperparameter grid
-param_grid_gb = {
-     'n_estimators': [500],  # Number of boosting rounds
-    'learning_rate': [0.3],  # Step size
-    'max_depth': [9],  # Tree depth
-    'min_samples_split': [15],  # Min samples to split a node
-    'min_samples_leaf': [4],  # Min samples per leaf
-    'subsample': [0.9],  # Fraction of samples per iteration
-    'max_features': [None]  # Features per split
+# Define fixed parameters for Gradient Boosting
+gb_params = {
+    'n_estimators': 500,  # Number of boosting rounds
+    'learning_rate': 0.3,  # Step size
+    'max_depth': 9,  # Tree depth
+    'min_samples_split': 15,  # Min samples to split a node
+    'min_samples_leaf': 4,  # Min samples per leaf
+    'subsample': 0.9,  # Fraction of samples per iteration
+    'max_features': None,  # Features per split
+    'random_state': 42
 }
 
-# Initialize RandomizedSearchCV
-random_search_gb = RandomizedSearchCV(
-    estimator=GradientBoostingClassifier(random_state=42),
-    param_distributions=param_grid_gb,
-    n_iter=50,  # Adjust for more trials
-    cv=5,
-    scoring='accuracy',
-    n_jobs=-1,
-    verbose=2,
-    random_state=42
-)
-
-# Fit the model
-random_search_gb.fit(X_train, y_train)
-
-# Get best parameters and score
-best_params_gb = random_search_gb.best_params_
-best_score_gb = random_search_gb.best_score_
-
-print(f"Best hyperparameters for Gradient Boosting: {best_params_gb}")
-print(f"Best cross-validation score: {best_score_gb}")
-
-# Train final model with best parameters
-best_gb_classifier = GradientBoostingClassifier(**best_params_gb, random_state=42)
-best_gb_classifier.fit(X_train, y_train)
+# Initialize and train the Gradient Boosting model
+gb_classifier = GradientBoostingClassifier(**gb_params)
+gb_classifier.fit(X_train, y_train)
 
 # Evaluate on test data
-y_pred_best_gb = best_gb_classifier.predict(X_test)
-accuracy_best_gb = accuracy_score(y_test, y_pred_best_gb)
+y_pred_gb = gb_classifier.predict(X_test)
+accuracy_gb = accuracy_score(y_test, y_pred_gb)
 
-print(f"Gradient Boosting Accuracy (with best hyperparameters): {accuracy_best_gb}")
-print(classification_report(y_test, y_pred_best_gb))
-print(confusion_matrix(y_test, y_pred_best_gb))
+# Print results
+print(f"Gradient Boosting Accuracy: {accuracy_gb:.4f}")
+print(classification_report(y_test, y_pred_gb))
+print(confusion_matrix(y_test, y_pred_gb))
+
 
 import subprocess
 
@@ -338,8 +300,8 @@ import joblib
 
 # Assuming your trained models are named logistic_model, xgboost_model, and gb_model
 joblib.dump(logreg, "logistic_model.pkl")
-joblib.dump(best_xgb_classifier, "tuned_xgboost_model.pkl")
-joblib.dump(best_gb_classifier, "tuned_gradient_boosting_model.pkl")
+joblib.dump(xgb_classifier, "tuned_xgboost_model.pkl")
+joblib.dump(gb_classifier, "tuned_gradient_boosting_model.pkl")
 joblib.dump(scaler, 'scaler.pkl')
 
 # DEPLOYMENT
