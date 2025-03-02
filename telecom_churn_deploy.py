@@ -341,15 +341,19 @@ for feature in selected_features:
 # Create a dictionary for user input
 user_input = {feature: input_fields[feature] for feature in selected_features}
 
-# Convert user input to DataFrame and standardize
+# Convert user input to DataFrame
 input_data = pd.DataFrame([user_input])
 
-# Ensure input_data matches training feature order
-expected_features = scaler.feature_names_in_  # Get expected feature names from scaler
-input_data = input_data.reindex(columns=expected_features, fill_value=0)  # Reorder and fill missing values
+# Ensure input_data matches the training feature order
+expected_features = list(scaler.feature_names_in_)  # Get expected feature names from the scaler
+input_data = input_data.reindex(columns=expected_features, fill_value=0)  # Reorder and fill missing features
 
 # Standardize input data
-input_data = scaler.fit_transform(input_data)
+input_data_scaled = scaler.fit_transform(input_data)
+
+# Reshape input_data_scaled to ensure compatibility
+input_data_scaled = input_data_scaled.reshape(1, -1)  # Ensure correct input shape
+
 
 # Prediction
 if st.button("Predict Churn"):
