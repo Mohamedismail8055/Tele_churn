@@ -343,7 +343,7 @@ model_choice = st.selectbox("Choose a model:",
 selected_features = st.multiselect("Select features:", list(feature_types.keys()), default=list(feature_types.keys()))
 
 # User input for selected features
-user_input = {}
+input_fields = {}
 for feature in selected_features:
     if feature_types[feature] == 'int':
         user_input[feature] = st.number_input(f"Enter value for {feature}", min_value=0, step=1, value=0)
@@ -351,6 +351,9 @@ for feature in selected_features:
         user_input[feature] = st.number_input(f"Enter value for {feature}", min_value=0.0, step=0.1, value=0.0)
     elif feature_types[feature] == 'binary':
         user_input[feature] = st.radio(f"Select value for {feature}", options=[0, 1], index=0)
+
+# Create a dictionary for user input
+user_input = {feature: input_fields[feature] for feature in selected_features}
 
 # Convert user input to DataFrame and standardize
 input_data = pd.DataFrame([user_input])
@@ -360,7 +363,7 @@ expected_features = scaler.feature_names_in_  # Get expected feature names from 
 input_data = input_data.reindex(columns=expected_features, fill_value=0)  # Reorder and fill missing values
 
 # Standardize input data
-input_data = scaler.transform(input_data)
+input_data = scaler.fit_transform(input_data)
 
 # Prediction
 if st.button("Predict Churn"):
