@@ -354,7 +354,13 @@ for feature in selected_features:
 
 # Convert user input to DataFrame and standardize
 input_data = pd.DataFrame([user_input])
-input_data = scaler.fit_transform(input_data)  # Standardize features using the loaded scaler
+
+# Ensure input_data matches training feature order
+expected_features = scaler.feature_names_in_  # Get expected feature names from scaler
+input_data = input_data.reindex(columns=expected_features, fill_value=0)  # Reorder and fill missing values
+
+# Standardize input data
+input_data = scaler.transform(input_data)
 
 # Prediction
 if st.button("Predict Churn"):
@@ -372,4 +378,3 @@ if st.button("Predict Churn"):
     churn_status = "Churned" if prediction[0] == 1 else "Not Churned"
     st.write(f"Prediction: **{churn_status}**")
     st.write(f"Churn Probability: **{probability[0]:.2%}**")
-
