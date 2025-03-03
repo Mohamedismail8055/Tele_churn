@@ -101,7 +101,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 numerical_features = df_resampled.select_dtypes(include=np.number).columns
 scaler = MinMaxScaler()
-normalised_data = scaler.transform(df_resampled[numerical_features])
+normalised_data = scaler.fit_transform(df_resampled[numerical_features])
 normalised_df = pd.DataFrame(normalised_data, columns=numerical_features, index=df_resampled.index)
 normalised_df.head()
 
