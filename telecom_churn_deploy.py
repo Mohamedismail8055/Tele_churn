@@ -315,7 +315,6 @@ import pandas as pd
 logistic_model = joblib.load("logistic_model.pkl")
 xgboost_model = joblib.load("tuned_xgboost_model.pkl")
 gb_model = joblib.load("tuned_gradient_boosting_model.pkl")
-rand_forest_model = joblib.load("random_forest.pkl")
 scaler = joblib.load("scaler.pkl")  # Load the scaler
 
 # Streamlit UI
@@ -324,7 +323,7 @@ st.write("Enter feature values to predict churn.")
 
 # Model selection
 model_choice = st.selectbox("Choose a model:", 
-                            ["Logistic Regression", "Tuned XGBoost", "Tuned Gradient Boosting (Highest Accuracy)", "Random Forest"])
+                            ["Logistic Regression", "Tuned XGBoost", "Tuned Gradient Boosting (Highest Accuracy)"])
 
 # User input fields (Top 10 Features Only)
 input_data = {
