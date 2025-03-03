@@ -317,10 +317,6 @@ xgboost_model = joblib.load("tuned_xgboost_model.pkl")
 gb_model = joblib.load("tuned_gradient_boosting_model.pkl")
 scaler = joblib.load("scaler.pkl")  # Load the scaler
 
-# Top 10 Features Ranked by Importance
-features = ['day.mins', 'customer.calls', 'eve.mins', 'voice.plan', 'night.mins',
-            'account.length', 'intl.mins', 'night.calls', 'day.calls', 'eve.calls']
-
 # Streamlit UI
 st.title("Telecom Churn Prediction App")
 st.write("Enter feature values to predict churn.")
@@ -330,22 +326,28 @@ model_choice = st.selectbox("Choose a model:",
                             ["Logistic Regression", "Tuned XGBoost", "Tuned Gradient Boosting (Highest Accuracy)"])
 
 # User input fields
-input_fields = {}
-for feature in features:
-    input_fields[feature] = st.number_input(f"Enter value for {feature}", value=0.0)
-
-# Create a dictionary for user input
-user_input = {feature: input_fields[feature] for feature in features}
+input_data = {
+    'day.mins': st.number_input("Enter Day Minutes", value=0.0),
+    'customer.calls': st.number_input("Enter Customer Calls", value=0, step=1),
+    'eve.mins': st.number_input("Enter Evening Minutes", value=0.0),
+    'voice.plan': st.radio("Select Voice Plan", options=[0, 1], index=0),
+    'night.mins': st.number_input("Enter Night Minutes", value=0.0),
+    'account.length': st.number_input("Enter Account Length", value=0, step=1),
+    'intl.mins': st.number_input("Enter International Minutes", value=0.0),
+    'night.calls': st.number_input("Enter Night Calls", value=0, step=1),
+    'day.calls': st.number_input("Enter Day Calls", value=0, step=1),
+    'eve.calls': st.number_input("Enter Evening Calls", value=0, step=1)
+}
 
 # Convert user input to DataFrame
-input_data = pd.DataFrame([user_input])
+input_data = pd.DataFrame([input_data])
 
 # Ensure input_data matches the training feature order
 expected_features = list(scaler.feature_names_in_)  # Get expected feature names from the scaler
 input_data = input_data.reindex(columns=expected_features, fill_value=0)  # Reorder and fill missing features
 
 # Standardize input data
-input_data_scaled = scaler.fit_transform(input_data)
+input_data_scaled = scaler.transform(input_data)
 
 # Reshape input_data_scaled to ensure compatibility
 input_data_scaled = input_data_scaled.reshape(1, -1)  # Ensure correct input shape
@@ -359,10 +361,8 @@ if st.button("Predict Churn"):
     else:
         model = gb_model
     
-    prediction = model.predict(input_data)
-    probability = model.predict_proba(input_data)[:, 1]
+    prediction = model.predict(input_data_scaled)
     
     st.subheader("Prediction Result")
     churn_status = "Churned" if prediction[0] == 1 else "Not Churned"
     st.write(f"Prediction: **{churn_status}**")
-    st.write(f"Churn Probability: **{probability[0]:.2%}**")
