@@ -101,7 +101,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 numerical_features = df_resampled.select_dtypes(include=np.number).columns
 scaler = MinMaxScaler()
-normalised_data = scaler.fit_transform(df_resampled[numerical_features])
+normalised_data = scaler.transform(df_resampled[numerical_features])
 normalised_df = pd.DataFrame(normalised_data, columns=numerical_features, index=df_resampled.index)
 normalised_df.head()
 
@@ -140,49 +140,6 @@ def select_features_by_collinearity(df, threshold=0.85, top_n=10):
 top_ten_features = select_features_by_collinearity(df_resampled, threshold=0.85, top_n=10)
 top_ten_features
 
-"""# Top features based on
-1. **mutual information:**
-intl.charge   :   0.429700,
-intl.mins     :   0.426242,
-night.charge  :    0.221482,
-day.charge    :    0.144500,
-day.mins      :    0.129421,
-eve.charge    :    0.100247,
-eve.mins      :    0.066443,
-night.mins    :    0.054718,
-voice.plan    :    0.050531,
-voice.messages:    0.032908
-
-
-2. **non-linear patterns:**
- day.charge     :   0.141592,
- day.mins       :   0.125520,
- customer.calls :   0.095396,
- eve.mins       :   0.061251,
- eve.charge     :   0.059580,
- voice.messages :   0.053899,
- voice.plan     :   0.052052,
- night.charge   :   0.045311,
- intl.charge    :   0.045038,
- night.mins     :   0.043922
-
-3. **RFE:**
- area.code, voice.plan, voice.messages, intl.mins, intl.calls,
-       day.mins, day.charge, eve.charge, night.charge,
-       customer.calls
-
-4. **Feature selection based on collinearity check.**
-  ['day.mins',
- 'customer.calls',
- 'eve.mins',
- 'voice.plan',
- 'night.mins',
- 'account.length',
- 'intl.mins',
- 'night.calls',
- 'day.calls',
- 'eve.calls']
-"""
 
 # Splitting into X and y based on collinearty check feature selection, although i can choose mutual info score or nonlinear pattern, i selected rfe for feature selection
 X_colinearity_selected = normalised_df[['day.mins',
@@ -347,7 +304,7 @@ expected_features = list(scaler.feature_names_in_)  # Get expected feature names
 input_data = input_data.reindex(columns=expected_features, fill_value=0)  # Reorder and fill missing features
 
 # Standardize input data
-input_data_scaled = scaler.fit_transform(input_data)
+input_data_scaled = scaler.transform(input_data)
 
 # Reshape input_data_scaled to ensure compatibility
 input_data_scaled = input_data_scaled.reshape(1, -1)  # Ensure correct input shape
