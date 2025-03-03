@@ -313,10 +313,6 @@ if 'eve.calls' in selected_features:
 # Convert user input to DataFrame
 input_data = pd.DataFrame([user_inputs])
 
-# Ensure input_data matches the training feature order
-expected_features = list(scaler.feature_names_in_)  # Get expected feature names from the scaler
-input_data = input_data.reindex(columns=expected_features, fill_value=0)  # Reorder and fill missing features
-
 # Standardize input data
 input_data_scaled = scaler.transform(input_data)
 
