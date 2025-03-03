@@ -305,7 +305,6 @@ joblib.dump(gb_classifier, "tuned_gradient_boosting_model.pkl")
 joblib.dump(scaler, 'scaler.pkl')
 
 # DEPLOYMENT
-# DEPLOYMENT
 
 import streamlit as st
 import joblib
@@ -324,22 +323,19 @@ features = ['day.mins', 'customer.calls', 'eve.mins', 'voice.plan', 'night.mins'
 
 # Streamlit UI
 st.title("Telecom Churn Prediction App")
-st.write("Select model, features, and input values to predict churn.")
+st.write("Enter feature values to predict churn.")
 
 # Model selection
 model_choice = st.selectbox("Choose a model:", 
                             ["Logistic Regression", "Tuned XGBoost", "Tuned Gradient Boosting (Highest Accuracy)"])
 
-# Feature selection
-selected_features = st.multiselect("Select features:", features, default=features)
-
 # User input fields
 input_fields = {}
-for feature in selected_features:
+for feature in features:
     input_fields[feature] = st.number_input(f"Enter value for {feature}", value=0.0)
 
 # Create a dictionary for user input
-user_input = {feature: input_fields[feature] for feature in selected_features}
+user_input = {feature: input_fields[feature] for feature in features}
 
 # Convert user input to DataFrame
 input_data = pd.DataFrame([user_input])
@@ -353,7 +349,6 @@ input_data_scaled = scaler.fit_transform(input_data)
 
 # Reshape input_data_scaled to ensure compatibility
 input_data_scaled = input_data_scaled.reshape(1, -1)  # Ensure correct input shape
-
 
 # Prediction
 if st.button("Predict Churn"):
@@ -371,4 +366,3 @@ if st.button("Predict Churn"):
     churn_status = "Churned" if prediction[0] == 1 else "Not Churned"
     st.write(f"Prediction: **{churn_status}**")
     st.write(f"Churn Probability: **{probability[0]:.2%}**")
-
