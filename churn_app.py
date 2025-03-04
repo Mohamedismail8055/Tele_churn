@@ -2,14 +2,16 @@ import streamlit as st
 import joblib
 import numpy as np
 import pandas as pd
+import os
 
 # Load trained models
 @st.cache_resource
 def load_models():
-    logistic_model = joblib.load("logistic_model.pkl")
-    xgboost_model = joblib.load("tuned_xgboost_model.pkl")
-    gb_model = joblib.load("tuned_gradient_boosting_model.pkl")
-    scaler = joblib.load("scaler.pkl")  # Load the trained scaler
+    MODEL_DIR = os.path.dirname(os.path.abspath(__file__))
+    logistic_model = joblib.load(os.path.join(MODEL_DIR, "logistic_model.pkl"))
+    xgboost_model = joblib.load(os.path.join(MODEL_DIR, "tuned_xgboost_model.pkl"))
+    gb_model = joblib.load(os.path.join(MODEL_DIR, "tuned_gradient_boosting_model.pkl"))
+    scaler = joblib.load(os.path.join(MODEL_DIR, "scaler.pkl"))
     return logistic_model, xgboost_model, gb_model, scaler
 
 logistic_model, xgboost_model, gb_model, scaler = load_models()
@@ -17,6 +19,9 @@ logistic_model, xgboost_model, gb_model, scaler = load_models()
 # Streamlit UI
 st.title("📊 Telecom Churn Prediction App")
 st.write("Enter feature values to predict whether a customer will churn.")
+
+# Debug: Check available files in the directory
+st.write("📂 Current directory files:", os.listdir())
 
 # Model selection
 model_choice = st.selectbox("Choose a model:", 
